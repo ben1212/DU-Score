@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilla University Tournament</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Banner Section -->
+    <div class="banner">
+        Dilla University Tournament
+    </div>
+
+    <div class="container">
+        <!-- Top Navigation Buttons -->
+        <div class="top-buttons">
+            <div>
+                <button id="todayButton" onclick="showToday()">Today</button>
+                <button id="finishedButton" onclick="showFinished()">Yesterday</button>
+                <button id="standingButton" onclick="showStanding()">Standing</button>
+                <button id="groupButton" onclick="showGroup()">Group</button>
+                <button id="updateScoreButton" onclick="showUpdateScore()">Update Score</button>
+            </div>
+        </div>
+
+        <!-- Today's Matches Section -->
+        <div class="section today">
+            <div class="header">
+                <h3>Today's Matches</h3>
+            </div>
+            <div class="match" id="match1">
+                <div class="team">🏫 Law Dept.</div>
+                <div class="score" id="lawScore">Score: 0</div>
+                <div class="team">🏫 Medicine Dept.</div>
+            </div>
+            <div class="match" id="match2">
+                <div class="team">🏫 Social Science Dept.</div>
+                <div class="score" id="socialScienceScore">Score: 0</div>
+                <div class="team">🏫 Computer Science Dept.</div>
+            </div>
+        </div>
+
+        <!-- Update Score Section -->
+        <div class="section update-score" style="display: none;">
+            <div class="header">
+                <h3>Update Score</h3>
+            </div>
+            <div class="update-form">
+                <div class="match-update" id="updateMatch1">
+                    <h4>⚽ Law Dept. vs Medicine Dept.</h4>
+                    <input type="number" id="lawDeptScore" placeholder="Enter Law Dept. Score">
+                    <input type="number" id="medicineDeptScore" placeholder="Enter Medicine Dept. Score">
+                    <button onclick="submitScore('lawScore', 'lawDeptScore', 'medicineDeptScore', 'match1')">Submit Score</button>
+                    <button onclick="finishMatch('Law Dept.', 'Medicine Dept.', 'lawDeptScore', 'medicineDeptScore', 'updateMatch1', 'match1')">Finish Match</button>
+                </div>
+                <div class="match-update" id="updateMatch2">
+                    <h4>⚽ Social Science Dept. vs Computer Science Dept.</h4>
+                    <input type="number" id="socialScienceDeptScore" placeholder="Enter Social Science Dept. Score">
+                    <input type="number" id="computerScienceDeptScore" placeholder="Enter Computer Science Dept. Score">
+                    <button onclick="submitScore('socialScienceScore', 'socialScienceDeptScore', 'computerScienceDeptScore', 'match2')">Submit Score</button>
+                    <button onclick="finishMatch('Social Science Dept.', 'Computer Science Dept.', 'socialScienceDeptScore', 'computerScienceDeptScore', 'updateMatch2', 'match2')">Finish Match</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finished Matches Section -->
+        <div class="section finished">
+            <div class="header">
+                <h3>Yesterday's Matches</h3>
+                <div id="finishedMatchesList"></div>
+            </div>
+        </div>
+
+        <!-- Standing Section -->
+        <div class="section standing" style="display: none;">
+            <div class="header">
+                <h3>Current Standings</h3>
+                <div id="standingsList">
+                    <div class="standing-entry">🏫 Law Dept. - Points: 6</div>
+                    <div class="standing-entry">🏫 Medicine Dept. - Points: 3</div>
+                    <div class="standing-entry">🏫 Social Science Dept. - Points: 4</div>
+                    <div class="standing-entry">🏫 Computer Science Dept. - Points: 1</div>
+                </div>
+                <button onclick="addTeam()">Add Team</button>
+                <button onclick="deleteTeam()">Delete Team</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show today's matches
+        function showToday() {
+            document.querySelector('.today').style.display = 'block';
+            document.querySelector('.finished').style.display = 'none';
+            document.querySelector('.update-score').style.display = 'none';
+            document.querySelector('.standing').style.display = 'none';
+        }
+
+        // Function to show finished matches
+        function showFinished() {
+            document.querySelector('.today').style.display = 'none';
+            document.querySelector('.finished').style.display = 'block';
+            document.querySelector('.update-score').style.display = 'none';
+            document.querySelector('.standing').style.display = 'none';
+        }
+
+        // Function to show update score section
+        function showUpdateScore() {
+            document.querySelector('.today').style.display = 'none';
+            document.querySelector('.finished').style.display = 'none';
+            document.querySelector('.update-score').style.display = 'block';
+            document.querySelector('.standing').style.display = 'none';
+        }
+
+        // Function to show standing section
+        function showStanding() {
+            document.querySelector('.today').style.display = 'none';
+            document.querySelector('.finished').style.display = 'none';
+            document.querySelector('.update-score').style.display = 'none';
+            document.querySelector('.standing').style.display = 'block';
+        }
+
+        // Function to update today's match scores
+        function submitScore(scoreElementId, scoreInputId1, scoreInputId2, matchId) {
+            const score1 = document.getElementById(scoreInputId1).value;
+            const score2 = document.getElementById(scoreInputId2).value;
+
+            // Update score in the score element
+            document.getElementById(scoreElementId).innerText = `Score: ${score1} - ${score2}`;
+
+            // Clear input fields
+            document.getElementById(scoreInputId1).value = '';
+            document.getElementById(scoreInputId2).value = '';
+        }
+
+        // Function to mark a match as finished and move it to finished matches
+        function finishMatch(team1, team2, scoreInputId1, scoreInputId2, updateMatchId, matchId) {
+            const score1 = document.getElementById(scoreInputId1).value || '0';
+            const score2 = document.getElementById(scoreInputId2).value || '0';
+
+            // Add finished match to yesterday's matches
+            const finishedSection = document.getElementById('finishedMatchesList');
+            const matchInfo = document.createElement('div');
+            matchInfo.innerHTML = `
+                <div class="match">
+                    <div class="team">🏫 ${team1}</div>
+                    <div class="score">Score: ${score1} - ${score2}</div>
+                    <div class="team">🏫 ${team2}</div>
+                </div>
+            `;
+            finishedSection.appendChild(matchInfo);
+
+            // Clear input fields for finished matches
+            document.getElementById(scoreInputId1).value = '';
+            document.getElementById(scoreInputId2).value = '';
+
+            // Hide the finished match from the update section
+            const matchUpdateDiv = document.getElementById(updateMatchId);
+            matchUpdateDiv.style.display = 'none';
+
+            // Remove the match from today's section
+            const todayMatch = document.getElementById(matchId);
+            todayMatch.style.display = 'none';
+        }
+
+        // Functions for adding and deleting teams in the standings
+        function addTeam() {
+            const newTeamName = prompt("Enter the new team name:");
+            if (newTeamName) {
+                const standingsList = document.getElementById('standingsList');
+                const newTeamEntry = document.createElement('div');
+                newTeamEntry.className = 'standing-entry';
+                newTeamEntry.innerText = `🏫 ${newTeamName} - Points: 0`;
+                standingsList.appendChild(newTeamEntry);
+            }
+        }
+
+        function deleteTeam() {
+            const teamName = prompt("Enter the name of the team to delete:");
+            const standingsList = document.getElementById('standingsList');
+            const entries = standingsList.getElementsByClassName('standing-entry');
+
+            for (let i = 0; i < entries.length; i++) {
+                if (entries[i].innerText.includes(teamName)) {
+                    standingsList.removeChild(entries[i]);
+                    break;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
